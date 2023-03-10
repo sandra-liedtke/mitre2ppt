@@ -1,11 +1,10 @@
-import os
 from bs4 import BeautifulSoup
 import requests
 from pptx import Presentation
 from pptx.util import Pt
 
 
-def get_webpage():
+def get_mitre():
     # url for enterprise techniques
     url = "https://attack.mitre.org/techniques/enterprise/"
     # define client and prepare header
@@ -64,11 +63,11 @@ def create_ppt(page):
 
 def main():
     # call the webpage
-    mitre_page = get_webpage()
+    mitre_page = get_mitre()
     # get only the table from the page and create the power point file
     create_ppt(mitre_page)
     # print finish message
-    print('Finished creating MITRE PPTX!')
+    print('Finished creating MITRE pptx file!')
 
 
 if __name__ == '__main__':
