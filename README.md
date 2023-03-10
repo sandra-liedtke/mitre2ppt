@@ -1,4 +1,4 @@
-# MITRE2PowerPoint
+# MITRE 2 PowerPoint
 Dieses Repository enthält ein Skript, das alle MITRE ATT&CK-Techniken und Subtechniken in eine PowerPoint-Präsentation schreibt. Jede Technik/Subtechnik bekommt dafür ein eigenes Slide. Es kann auch weiterer Inhalt automatisch auf alle Slides hinzugefügt werden, indem dieser im Code ergänzt wird.
 
 ## English Version
