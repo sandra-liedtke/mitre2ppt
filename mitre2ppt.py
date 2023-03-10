@@ -49,7 +49,7 @@ def create_ppt(page):
             # set the font size for the title
             slide.placeholders[0].text_frame.paragraphs[0].font.size = Pt(32)
             # set the content of the slide = description of the MITRE Technique + additional text/info if needed
-            content_text.text = description + '\nRelevant?\t\t\t\tYes/No\nPriority:\t\t\t\t'
+            content_text.text = description + '\n\nRelevant?\t\t\t\tYes/No'
             # set the font size of the description for each paragraph
             i = len(slide.placeholders[1].text_frame.paragraphs) - 1
             while i >= 0:
