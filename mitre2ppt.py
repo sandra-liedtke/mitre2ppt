@@ -1,12 +1,11 @@
+import re
 from bs4 import BeautifulSoup
 import requests
 from pptx import Presentation
 from pptx.util import Pt
 
 
-def get_mitre():
-    # url for enterprise techniques
-    url = "https://attack.mitre.org/techniques/enterprise/"
+def get_mitre(url):
     # define client and prepare header
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36'
     headers = {'User-Agent': user_agent}
@@ -20,10 +19,11 @@ def get_mitre():
     return response
 
 
-def create_ppt(page):
+def main():
+    response = get_mitre('https://attack.mitre.org/techniques/enterprise/')
     try:
         # parse webpage
-        website_content = BeautifulSoup(page.content, 'html.parser')
+        website_content = BeautifulSoup(response.content, 'html.parser')
         # find table and its rows
         table_body = website_content.find('tbody')
         rows = table_body.find_all('tr')
@@ -44,12 +44,21 @@ def create_ppt(page):
             if entry.attrs['class'][0] == "technique":
                 technique = name
                 title.text = name
+                # for techniques also get the tactics from the technique page
+                sub_page = entry.contents[1].contents[1].attrs['href']
+                technique_page = get_mitre('https://attack.mitre.org/' + sub_page)
+                technique_page = BeautifulSoup(technique_page.content, 'html.parser')
+                # get tactics from webpage
+                tactics = technique_page.find('div', {'id': 'card-tactics'})
+                # clean extracted content
+                tactics = tactics.text.replace('\n', '').replace('ⓘTactics:', '').replace('ⓘTactic:', '')
+                tactics = re.sub(re.compile('[ ]{2,5}'), '', str(tactics))
             else:
                 title.text = technique + "-" + name
             # set the font size for the title
             slide.placeholders[0].text_frame.paragraphs[0].font.size = Pt(32)
             # set the content of the slide = description of the MITRE Technique + additional text/info if needed
-            content_text.text = description + '\n\nRelevant?\t\t\t\tYes/No'
+            content_text.text = description + '\n\nTactics:\t\t' + tactics + '\nRelevant?\t\tYes/No'
             # set the font size of the description for each paragraph
             i = len(slide.placeholders[1].text_frame.paragraphs) - 1
             while i >= 0:
@@ -59,14 +68,6 @@ def create_ppt(page):
         ppt.save('MITRE ATT&CK.pptx')
     except Exception as e:
         print('Error creating power point file. Error Message: ', str(e))
-
-
-def main():
-    # call the webpage
-    mitre_page = get_mitre()
-    # get only the table from the page and create the power point file
-    create_ppt(mitre_page)
-    # print finish message
     print('Finished creating MITRE pptx file!')
 
 
